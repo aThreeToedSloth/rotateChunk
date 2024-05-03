@@ -1,0 +1,8 @@
+name: chunkRotation
+version: '${project.version}'
+main: me.athreetoedsloth.chunkrotation.ChunkRotation
+api-version: '1.20'
+commands:
+  rotate:
+    description: rotates the chunk you are on by 90 degrees.
+    usage: /<command>
