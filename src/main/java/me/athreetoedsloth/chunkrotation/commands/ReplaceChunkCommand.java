@@ -17,9 +17,19 @@ public class ReplaceChunkCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String s, @NotNull String[] strings) {
-        if(sender instanceof Player){
-            Player p = (Player) sender;
-            plugin.chunkManager.rotate(p);
+        if(sender instanceof Player && strings.length == 1){
+            try {
+                int degrees = Integer.parseInt(strings[0]);
+                if(degrees == 90 || degrees ==180 || degrees ==270){
+                    Player p = (Player) sender;
+                    plugin.chunkManager.rotate(p, Integer.parseInt(strings[0]));
+                }
+                else {
+                    sender.sendMessage("You can only rotate the chunk by 90, 180 or 270 degrees.");
+                }
+            } catch (NumberFormatException n){
+                sender.sendMessage("Please provide an integer to determine how many degrees the chunk should be rotated by.");
+            }
             return true;
         }
     return false;
