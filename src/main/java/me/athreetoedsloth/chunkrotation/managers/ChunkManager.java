@@ -19,6 +19,7 @@ public class ChunkManager {
         int chunkX = chunk.getX() * 16 + 8;
         int chunkZ = chunk.getZ() * 16 + 8;
 
+        //store blocks in array
         for(int i = 0; i < 16; i++){
             for(int j = 0; j < 384; j++){
                 for(int k = 0; k < 16; k++){
@@ -27,6 +28,7 @@ public class ChunkManager {
             }
         }
 
+        //rotate
         for(int i = 0; i < 16 ; i++){
             for(int j = 0; j < 384; j++){
                 for(int k = 0; k < 16; k++){
