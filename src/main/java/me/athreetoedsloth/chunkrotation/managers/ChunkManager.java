@@ -10,73 +10,44 @@ public class ChunkManager {
     public ChunkManager(ChunkRotation plugin){
         this.plugin = plugin;
     }
-    private Material[][][] blocksCentre = new Material[16][320][16];
-    private Material[][][] blocksCentre2 = new Material[16][320][16];
+    private Material[][][] blocks = new Material[16][384][16];
     int x, z, _x, _z;
 
     public void rotate(Player p, int degrees){
         //Define chunks.
-        Chunk chunk1 = p.getChunk();
-        Chunk chunkCentre = p.getWorld().getChunkAt(new Location(p.getWorld(), 1, 0, 0));
-        Chunk chunkCentre2;
-        switch (degrees){
-            case 90:
-                chunkCentre2 = p.getWorld().getChunkAt(new Location(p.getWorld(), -1, 0, 0));
-                break;
-            case 180:
-                chunkCentre2 = p.getWorld().getChunkAt(new Location(p.getWorld(), -1, 0, -1));
-                break;
-            default:
-                chunkCentre2 = p.getWorld().getChunkAt(new Location(p.getWorld(), 0, 0, -1));
-                break;
-        }
+        Chunk chunk = p.getChunk();
+        int chunkX = chunk.getX() * 16 + 8;
+        int chunkZ = chunk.getZ() * 16 + 8;
 
-        //Create backup of centre blocks and replace centre with chunk1 blocks.
-        for(int i = 0; i < 16 ; i++){
-            for(int j = 0; j < 320; j++){
+        for(int i = 0; i < 16; i++){
+            for(int j = 0; j < 384; j++){
                 for(int k = 0; k < 16; k++){
-                    blocksCentre[i][j][k] = chunkCentre.getBlock(i,j,k).getType();
-                    blocksCentre2[i][j][k] = chunkCentre2.getBlock(i,j,k).getType();
-                    chunkCentre.getBlock(i,j,k).setType(chunk1.getBlock(i,j,k).getType());
+                    blocks[i][j][k] = chunk.getBlock(i,j-64,k).getType();
                 }
             }
         }
 
-        rotate(chunkCentre, p, degrees);
-
-        //Move chunk1 back to original position and replace centre with original.
         for(int i = 0; i < 16 ; i++){
-            for(int j = 0; j < 320; j++){
+            for(int j = 0; j < 384; j++){
                 for(int k = 0; k < 16; k++){
-                    chunk1.getBlock(i,j,k).setType(chunkCentre2.getBlock(i,j,k).getType());
-                    chunkCentre.getBlock(i,j,k).setType(blocksCentre[i][j][k]);
-                    chunkCentre2.getBlock(i,j,k).setType(blocksCentre2[i][j][k]);
-                }
-            }
-        }
-    }
+                    x = chunk.getBlock(i,j-64,k).getLocation().getBlockX() - chunkX;
+                    z = chunk.getBlock(i,j-64,k).getLocation().getBlockZ() - chunkZ;
 
-    private void rotate(Chunk chunkCentre, Player p, int degrees){
-        for(int i = 0; i < 16 ; i++){
-            for(int j = 0; j < 320; j++){
-                for(int k = 0; k < 16; k++){
-                    x = chunkCentre.getBlock(i,j,k).getLocation().getBlockX();
-                    z = chunkCentre.getBlock(i,j,k).getLocation().getBlockZ();
                     switch (degrees){
                         case 90:
                             _x = -z;
                             _z = x;
-                            new Location(p.getWorld(), _x-1, j, _z).getBlock().setType(chunkCentre.getBlock(i,j,k).getType());
+                            new Location(p.getWorld(), _x + chunkX-1, j-64, _z + chunkZ).getBlock().setType(blocks[i][j][k]);
                             break;
                         case 180:
                             _x = -x;
                             _z = -z;
-                            new Location(p.getWorld(), _x-1, j, _z-1).getBlock().setType(chunkCentre.getBlock(i,j,k).getType());
+                            new Location(p.getWorld(), _x + chunkX-1, j-64, _z + chunkZ-1).getBlock().setType(blocks[i][j][k]);
                             break;
-                        case 270:
+                        default:
                             _x = z;
                             _z = -x;
-                            new Location(p.getWorld(), _x, j, _z-1).getBlock().setType(chunkCentre.getBlock(i,j,k).getType());
+                            new Location(p.getWorld(), _x + chunkX, j-64, _z + chunkZ-1).getBlock().setType(blocks[i][j][k]);
                             break;
                     }
                 }
